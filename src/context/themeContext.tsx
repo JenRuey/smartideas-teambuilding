@@ -1,4 +1,4 @@
-import { createContext, Dispatch, PropsWithChildren, SetStateAction, useContext, useState } from "react";
+import { createContext, Dispatch, PropsWithChildren, SetStateAction, useContext, useState, useEffect } from "react";
 
 type ThemeContextType = {
   lightmode: boolean;
@@ -8,6 +8,10 @@ type ThemeContextType = {
 export const ThemeContext = createContext<ThemeContextType>({ lightmode: true, setLightMode: () => {} });
 export function ThemeContextProvider({ children }: PropsWithChildren<{}>) {
   const [lightmode, setLightMode] = useState<boolean>(true);
+
+  useEffect(() => {
+    document.body.style.background = lightmode ? "white" : "black";
+  }, [lightmode]);
 
   return <ThemeContext.Provider value={{ lightmode, setLightMode }}>{children}</ThemeContext.Provider>;
 }
