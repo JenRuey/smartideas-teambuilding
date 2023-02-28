@@ -1,4 +1,3 @@
-import "@roy1997/components/dist/index.cjs.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ReactDOM from "react-dom/client";
 import { Provider as ReduxProvider } from "react-redux";

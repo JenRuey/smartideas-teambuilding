@@ -1,4 +1,4 @@
-import { Loading } from "@roy1997/components";
+import { SpinnerBox } from "@roy1997/components";
 import { useState } from "react";
 import { Button, Col, Modal, Row } from "react-bootstrap";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -42,7 +42,7 @@ function App() {
 
   return (
     <Tdiv className="App">
-      {loading && <Loading />}
+      {loading && <SpinnerBox />}
       <div className="flex-center-between flex-wrap p-2" style={{ background: "darkblue", color: "white" }}>
         <div className="flex-center">
           <FcIdea size={25} />
