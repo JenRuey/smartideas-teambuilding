@@ -1,4 +1,4 @@
-import { SpinnerBox } from "@roy1997/components";
+import { RYModal, SpinnerBox } from "@roy1997/components";
 import { useState } from "react";
 import { Button, Col, Modal, Row } from "react-bootstrap";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -6,12 +6,11 @@ import { BiDotsVerticalRounded } from "react-icons/bi";
 import { FcIdea } from "react-icons/fc";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
 import { toast } from "react-toastify";
-import { useStorage } from "./async_storage";
 import { Tdiv } from "./components/styled/AppContainer";
 import { GBox } from "./components/styled/GroupBox";
-import { ModalListener } from "./components/user-alert/ModalContainer";
 import { useThemeContext } from "./context/themeContext";
 import { useAppSelector } from "./state/hook";
+import { useStorage } from "./tables";
 
 function App() {
   const trigPoint = useState<boolean>(false);
@@ -59,7 +58,7 @@ function App() {
             <GBox
               className={"m-2"}
               onClick={() =>
-                ModalListener.fire({
+                RYModal.trigger({
                   title: "Add New Group",
                   content: (close) => (
                     <>

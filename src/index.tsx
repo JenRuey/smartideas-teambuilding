@@ -1,11 +1,10 @@
+import { RYAlert, RYModal } from "@roy1997/components";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ReactDOM from "react-dom/client";
 import { Provider as ReduxProvider } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import App from "./App";
-import AlertContainer from "./components/user-alert/AlertContainer";
-import ModalContainer from "./components/user-alert/ModalContainer";
 import { ThemeContextProvider } from "./context/themeContext";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
@@ -17,8 +16,8 @@ root.render(
     <ThemeContextProvider>
       <App />
       <ToastContainer />
-      <AlertContainer />
-      <ModalContainer />
+      <RYAlert.Container />
+      <RYModal.Container />
     </ThemeContextProvider>
   </ReduxProvider>
 );

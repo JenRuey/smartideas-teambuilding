@@ -1,5 +1,4 @@
-import { createTable } from "../utils/table.func";
-import { CommonType, TableInterface, ToggleStateType } from "./table.types";
+import { CommonType, createTable, TableInterface, ToggleStateType } from "@roy1997/components";
 
 const tablename = "tbl-member";
 
