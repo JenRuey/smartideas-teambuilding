@@ -5,7 +5,6 @@ export const GBox = styled.div`
   padding: 20px;
   background: white;
   height: 180px;
-  cursor: pointer;
   border-radius: 10px;
   .hfont {
     font-weight: bold;
@@ -24,6 +23,5 @@ export const GBox = styled.div`
     z-index: 1;
     top: 10px;
     right: 10px;
-    cursor: pointer;
   }
 `;

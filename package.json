@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
-    "@roy1997/components": "^1.0.10",
+    "@roy1997/components": "^1.0.11",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -49,12 +49,12 @@
     ]
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.194",
-    "@types/react-speech-recognition": "^3.9.2",
-    "@types/styled-components": "^5.1.26",
     "@types/jest": "^27.5.2",
+    "@types/lodash": "^4.14.194",
     "@types/node": "^16.18.24",
     "@types/react": "^18.0.38",
-    "@types/react-dom": "^18.0.11"
+    "@types/react-dom": "^18.0.11",
+    "@types/react-speech-recognition": "^3.9.2",
+    "@types/styled-components": "^5.1.26"
   }
 }

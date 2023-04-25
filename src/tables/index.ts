@@ -1,12 +1,12 @@
-import { TableInterface, ToggleStateType } from "@roy1997/components";
-import { grouptable, GroupType } from "./group";
-import { membertable, MemberType } from "./member";
+import { GroupType, grouptable } from "./group";
+import { MemberType, membertable } from "./member";
+import { TableInterface, ToggleStateType } from "./table.types";
 
-interface StorageInitInterface {
+export interface StorageInitInterface {
   group: TableInterface<GroupType>;
   member: TableInterface<MemberType>;
 }
 
-export function useStorage(toggleState?: ToggleStateType): StorageInitInterface {
+export function initStorage(toggleState?: ToggleStateType): StorageInitInterface {
   return { group: grouptable(toggleState), member: membertable(toggleState) };
 }
