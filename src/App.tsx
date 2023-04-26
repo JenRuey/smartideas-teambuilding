@@ -5,7 +5,9 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { FcIdea } from "react-icons/fc";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Function from "./components/Function";
 import MemberModal, { MemberModalRef } from "./components/MemberModal";
 import { Tdiv } from "./components/styled/AppContainer";
 import { GBox } from "./components/styled/GroupBox";
@@ -25,6 +27,7 @@ function Cursor() {
   const [height, setHeight] = React.useState(window.innerHeight);
   let cursorVisible = React.useRef(false);
   let cursorEnlarged = React.useRef(false);
+  let cursorText = React.useRef(false);
 
   /**
    * Mouse Moves
@@ -33,6 +36,7 @@ function Cursor() {
     const { pageX: x, pageY: y } = event;
     setMousePosition({ x, y });
     positionDot(event);
+    handleLinkHovers();
   };
   const onMouseEnter = () => {
     cursorVisible.current = true;
@@ -120,10 +124,29 @@ function Cursor() {
    */
   function toggleCursorSize() {
     if (cursorEnlarged.current) {
-      if (cursorDot.current) cursorDot.current.style.transform = "translate(-50%, -50%) scale(0.7)";
+      if (cursorDot.current) {
+        cursorDot.current.classList.remove("text-cursor");
+        cursorDot.current.style.transform = "translate(-50%, -50%) scale(2)";
+      }
       if (cursorDotOutline.current) cursorDotOutline.current.style.transform = "translate(-50%, -50%) scale(5)";
     } else {
-      if (cursorDot.current) cursorDot.current.style.transform = "translate(-50%, -50%) scale(1)";
+      if (cursorDot.current) {
+        cursorDot.current.classList.remove("text-cursor");
+        cursorDot.current.style.transform = "translate(-50%, -50%) scale(1)";
+      }
+      if (cursorDotOutline.current) cursorDotOutline.current.style.transform = "translate(-50%, -50%) scale(1)";
+    }
+  }
+
+  /**
+   * Toggle Cursor Text
+   */
+  function toggleCursorText() {
+    if (cursorText.current) {
+      if (cursorDot.current) cursorDot.current.classList.add("text-cursor");
+      if (cursorDotOutline.current) cursorDotOutline.current.style.transform = "translate(-50%, -50%) scale(5)";
+    } else {
+      if (cursorDot.current) cursorDot.current.classList.remove("text-cursor");
       if (cursorDotOutline.current) cursorDotOutline.current.style.transform = "translate(-50%, -50%) scale(1)";
     }
   }
@@ -134,7 +157,9 @@ function Cursor() {
    * to trigger cursor animation
    */
   function handleLinkHovers() {
-    document.querySelectorAll("a").forEach((el) => {
+    document.querySelectorAll(".user-point:not(.crsl)").forEach((el) => {
+      el.classList.remove("user-point");
+      el.classList.add("crsl");
       el.addEventListener("mouseover", () => {
         cursorEnlarged.current = true;
         toggleCursorSize();
@@ -142,6 +167,29 @@ function Cursor() {
       el.addEventListener("mouseout", () => {
         cursorEnlarged.current = false;
         toggleCursorSize();
+      });
+    });
+    document.querySelectorAll("button:not(.crsl)").forEach((el) => {
+      el.classList.add("crsl");
+      el.addEventListener("mouseover", () => {
+        cursorEnlarged.current = true;
+        toggleCursorSize();
+      });
+      el.addEventListener("mouseout", () => {
+        cursorEnlarged.current = false;
+        toggleCursorSize();
+      });
+    });
+
+    document.querySelectorAll("input:not(.crsl)").forEach((el) => {
+      el.classList.add("crsl");
+      el.addEventListener("mouseover", () => {
+        cursorText.current = true;
+        toggleCursorText();
+      });
+      el.addEventListener("mouseout", () => {
+        cursorText.current = false;
+        toggleCursorText();
       });
     });
   }
@@ -175,6 +223,8 @@ function Cursor() {
 function App() {
   const trigPoint = useState<boolean>(false);
   const local_db = initStorage(trigPoint);
+
+  const navigate = useNavigate();
 
   const modalRef = useRef<MemberModalRef>();
 
@@ -223,48 +273,71 @@ function App() {
     if (modalRef.current) modalRef.current.Show(grpKey, mmber);
   };
 
+  const onFunction = (grpKey: string) => {
+    navigate("/detail/" + grpKey);
+  };
+
   return (
     <DBContext.Provider value={local_db}>
       <Tdiv className="App">
         <Cursor />
         {loading && <SpinnerBox />}
         <div className="flex-center-between flex-wrap p-2" style={{ background: "darkblue", color: "white" }}>
-          <div className="flex-center">
+          <div className="flex-center user-point" onClick={() => navigate("/")}>
             <FcIdea size={25} />
             <span className="header">SMART IDEAS</span>
           </div>
           <div className="flex-center">
-            {lightmode ? <MdLightMode onClick={() => setLightMode(false)} /> : <MdDarkMode onClick={() => setLightMode(true)} />}
+            {lightmode ? <MdLightMode className={"user-point"} onClick={() => setLightMode(false)} /> : <MdDarkMode className={"user-point"} onClick={() => setLightMode(true)} />}
             <div className="mx-2">{"Teambuilding " + appState.version.toFixed(1)}</div>
           </div>
         </div>
-        <div className="p-3">
-          <Row>
-            <Col xl={3} lg={4} md={6} sm={12}>
-              <GBox className={"m-2"} onClick={onNewGroupClicked}>
-                <div className="flex-center-center flex-column h-100">
-                  <AiOutlinePlus />
-                  <strong>{"Add group"}</strong>
-                </div>
-              </GBox>
-            </Col>
-            {local_db.group.selectall().map((item, index) => {
-              let members = local_db.member.filterall([{ attribute: "group", text: item.key }]);
-              return (
-                <Col xl={3} lg={4} md={6} sm={12}>
-                  <GBox key={"group-bx" + index} className={"m-2"}>
-                    <div className="hfont">{item.groupname}</div>
-                    <div className="sfont">{members.length + " members added."}</div>
-                    <div className="top-right-float" onClick={() => onDetailGroup(item.key, members)}>
-                      <BiDotsVerticalRounded />
-                    </div>
-                  </GBox>
-                </Col>
-              );
-            })}
-          </Row>
-        </div>
-        <MemberModal ref={modalRef} />
+        <Routes>
+          <Route path={"/detail/:grp"} element={<Function />} />
+          <Route
+            path={"/"}
+            element={
+              <div className="p-3">
+                <Row>
+                  <Col xl={3} lg={4} md={6} sm={12}>
+                    <GBox className={"m-2 user-point"} onClick={onNewGroupClicked}>
+                      <div className="flex-center-center flex-column h-100">
+                        <AiOutlinePlus />
+                        <strong>{"Add group"}</strong>
+                      </div>
+                    </GBox>
+                  </Col>
+                  {local_db.group.selectall().map((item, index) => {
+                    let members = local_db.member.filterall([{ attribute: "group", text: item.key }]);
+                    return (
+                      <Col xl={3} lg={4} md={6} sm={12}>
+                        <GBox key={"group-bx" + index} className={"m-2 user-point"} onClick={() => onFunction(item.key)}>
+                          <div className="hfont">{item.groupname}</div>
+                          <div className="sfont">{members.length + " members added."}</div>
+                          <div className="sfont">
+                            {members.map((m) => (
+                              <div className="member-dot">{m.membername}</div>
+                            ))}
+                          </div>
+                          <div
+                            className="top-right-float user-point"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDetailGroup(item.key, members);
+                            }}
+                          >
+                            <BiDotsVerticalRounded />
+                          </div>
+                        </GBox>
+                      </Col>
+                    );
+                  })}
+                </Row>
+                <MemberModal ref={modalRef} />
+              </div>
+            }
+          ></Route>
+        </Routes>
       </Tdiv>
     </DBContext.Provider>
   );

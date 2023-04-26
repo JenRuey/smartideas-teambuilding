@@ -40,7 +40,7 @@ html,
 body,
 html *,
 body * {
-  cursor: none !important;
+  cursor: none;
 }
 
 #cursor-dot,
@@ -60,6 +60,11 @@ body * {
   width: var(--cursor-size);
   height: var(--cursor-size);
   background-color: rgba(var(--color-cursor), 1);
+}
+#cursor-dot.text-cursor {
+  border-radius: unset;
+  width: 2px;
+  height: calc(var(--cursor-size) * 2);
 }
 
 #cursor-dot-outline {

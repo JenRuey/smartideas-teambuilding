@@ -1,4 +1,6 @@
 import React from "react";
+import { Button, Modal } from "react-bootstrap";
+import { BiUserPlus, BiUserX } from "react-icons/bi";
 import { toast } from "react-toastify";
 import { useDBContext } from "../context/dbContext";
 import { MemberType } from "../tables/member";
@@ -18,6 +20,12 @@ const MemberModal = React.forwardRef<MemberModalRef, MemberModalPropType>((_: Me
   const [key, setKey] = React.useState<string>("");
   const [members, setMembers] = React.useState<Array<MemberType>>([]);
 
+  const closeModal = () => {
+    setShow(false);
+    setMembers([]);
+    setKey("");
+  };
+
   React.useImperativeHandle(
     ref,
     () => ({
@@ -26,62 +34,89 @@ const MemberModal = React.forwardRef<MemberModalRef, MemberModalPropType>((_: Me
         setMembers(mb);
         setKey(grpKey);
       },
-      Close: () => {
-        setShow(false);
-        setMembers([]);
-        setKey("");
-      },
+      Close: closeModal,
     }),
     []
   );
 
-  const addmember = () => {
+  const onAdd = () => {
     let newmemberinpt: HTMLElement | null = document.getElementById("newmembername");
 
     if (newmemberinpt && (newmemberinpt as HTMLInputElement).value) {
       let inpt = newmemberinpt as HTMLInputElement;
-      let _members = [...members];
-      _members.push({ membername: inpt.value, group: key, key: "" });
-      setMembers(_members);
+      local_db.member.addall([{ membername: inpt.value, group: key }]);
+      setMembers(local_db.member.filterall([{ attribute: "group", text: key }]));
       inpt.value = "";
     } else {
       toast("Member Name is required.");
     }
   };
 
+  const onDelete = (k: string) => {
+    local_db.member.deleteall([k]);
+    setMembers(local_db.member.filterall([{ attribute: "group", text: key }]));
+  };
+
   const onSave = () => {
     local_db.member.updateitems(members);
-    setShow(false);
+    closeModal();
   };
 
-  const onDelete = (key: string) => {
-    local_db.member.deleteall([key]);
-    setMembers([...members].filter((o) => o.key !== key));
-  };
-
-  return show ? (
-    <div>
-      {members.map((item, index) => {
-        return (
-          <div key={item.key + "-" + index}>
-            <input
-              value={item.membername}
-              onChange={(e) => {
-                let _members = [...members];
-                _members[index] = { ..._members[index], membername: e.target.value };
-                setMembers(_members);
-              }}
-            />
-            <button onClick={() => onDelete(item.key)}>delete</button>
-          </div>
-        );
-      })}
-      <input id={"newmembername"} />
-      <button onClick={addmember}>add</button>
-      <button onClick={() => setShow(false)}>close</button>
-      <button onClick={onSave}>save</button>
-    </div>
-  ) : null;
+  return (
+    <Modal show={show} onHide={closeModal}>
+      <Modal.Header closeButton>
+        <Modal.Title>{"Manage Members"}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {members.map((item, index) => {
+              return (
+                <tr key={item.key + "-" + index}>
+                  <td>
+                    <input
+                      value={item.membername}
+                      onChange={(e) => {
+                        let _members = [...members];
+                        _members[index] = { ..._members[index], membername: e.target.value };
+                        setMembers(_members);
+                      }}
+                    />
+                  </td>
+                  <td>
+                    <button onClick={() => onDelete(item.key)}>
+                      <BiUserX />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+            <tr>
+              <td>
+                <input id={"newmembername"} />
+              </td>
+              <td>
+                <button onClick={onAdd}>
+                  <BiUserPlus />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="primary" onClick={onSave}>
+          {"Save Changes"}
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
 });
 
 export default MemberModal;

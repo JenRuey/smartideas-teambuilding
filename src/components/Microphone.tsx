@@ -71,7 +71,7 @@ function Microphone() {
 
       <div className="microphone-wrapper">
         <div className="mircophone-container">
-          <div className="microphone-icon-container" ref={microphoneRef} onClick={handleListing}>
+          <div className="microphone-icon-container user-point" ref={microphoneRef} onClick={handleListing}>
             test
           </div>
           <div className="microphone-status">{isListening ? "Listening........." : "Click to start Listening"}</div>
